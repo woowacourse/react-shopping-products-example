@@ -1,30 +1,36 @@
 import { useState } from "react";
-import { type CartItemType, type ProductType } from "./remote";
+import { type ProductType } from "./remote";
 import { mockProducts } from "../mocks/products";
+import { useCartContext } from "./CartContext";
 
-export default function ProductList({
-  cartItems,
-  handleToggleCartItem,
-}: {
-  cartItems: CartItemType[];
-  handleToggleCartItem: (productId: number) => void;
-}) {
+export default function ProductList() {
   const [products] = useState<ProductType[]>(mockProducts);
 
   return (
     <>
       {products.map((product) => (
-        <ProductItem
-          key={product.id}
-          product={product}
-          isInCart={cartItems.some((item) => item.product.id === product.id)}
-          onToggleCart={() => handleToggleCartItem(product.id)}
-        />
+        <CartAwareProductItem key={product.id} product={product} />
       ))}
     </>
   );
 }
 
+function CartAwareProductItem({ product }: { product: ProductType }) {
+  const { cartItems, toggleCartItem } = useCartContext();
+
+  const isInCart = cartItems.some((item) => item.product.id === product.id);
+  const onToggleCart = () => toggleCartItem(product.id);
+
+  return (
+    <ProductItem
+      product={product}
+      isInCart={isInCart}
+      onToggleCart={onToggleCart}
+    />
+  );
+}
+
+// 순수 컴포넌트
 function ProductItem({
   product,
   isInCart,

@@ -1,8 +1,10 @@
-export default function Header({ cartItemCount }: { cartItemCount: number }) {
+import { useCartContext } from "./CartContext";
+
+export default function Header() {
   return (
     <>
       <CartIcon />
-      <CartItemCount cartItemCount={cartItemCount} />
+      <CartItemCount />
     </>
   );
 }
@@ -11,6 +13,8 @@ function CartIcon() {
   return <div>🛒</div>;
 }
 
-function CartItemCount({ cartItemCount }: { cartItemCount: number }) {
+function CartItemCount() {
+  const { cartItemCount } = useCartContext();
+
   return <div>{cartItemCount} items</div>;
 }

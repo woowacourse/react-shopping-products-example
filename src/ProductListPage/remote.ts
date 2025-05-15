@@ -1,4 +1,4 @@
-export const BASE_URL = "http://localhost:8080";
+import { mockProducts } from "../mocks/products";
 
 export type CartItemType = {
   id: number;
@@ -14,22 +14,30 @@ export type ProductType = {
   category: string;
 };
 
-export const getCartItems = async () => {
-  const res = await fetch(`${BASE_URL}/cart-items`);
-  return res.json() as Promise<CartItemType[]>;
+// mock data
+let mockCartItems: CartItemType[] = [];
+let nextCartItemId = 1;
+
+// API mocking
+export const getCartItems = async (): Promise<CartItemType[]> => {
+  return Promise.resolve([...mockCartItems]);
 };
 
 export const addCartItem = async (productId: number) => {
-  await fetch(`${BASE_URL}/cart-items`, {
-    method: "POST",
-    body: JSON.stringify({ productId, quantity: 1 }),
-  });
-  return null;
+  const product = mockProducts.find((p) => p.id === productId);
+
+  if (product) {
+    mockCartItems.push({
+      id: nextCartItemId++,
+      quantity: 1,
+      product,
+    });
+  }
+
+  return Promise.resolve(null);
 };
 
 export const deleteCartItem = async (cartItemId: number) => {
-  await fetch(`${BASE_URL}/cart-items/${cartItemId}`, {
-    method: "DELETE",
-  });
-  return null;
+  mockCartItems = mockCartItems.filter((item) => item.id !== cartItemId);
+  return Promise.resolve(null);
 };
