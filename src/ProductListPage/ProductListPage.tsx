@@ -7,6 +7,7 @@ import {
   getCartItems,
   type CartItemType,
 } from "./remote";
+import ProductItem from "./ProductItem";
 
 export default function ProductListPage() {
   const [cartItems, setCartItems] = useState<CartItemType[]>([]);
@@ -34,8 +35,13 @@ export default function ProductListPage() {
     <>
       <Header cartItemCount={cartItems.length} />
       <ProductList
-        cartItems={cartItems}
-        handleToggleCartItem={handleToggleCartItem}
+        renderProduct={({ product }) => (
+          <ProductItem
+            product={product}
+            isInCart={cartItems.some((item) => item.product.id === product.id)}
+            onToggleCart={() => handleToggleCartItem(product.id)}
+          />
+        )}
       />
     </>
   );
