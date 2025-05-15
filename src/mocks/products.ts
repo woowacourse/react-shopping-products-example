@@ -1,4 +1,4 @@
-import type { ProductType } from "../main/remote";
+import type { ProductType } from "../ProductListPage/remote";
 
 export const mockProducts: ProductType[] = [
   {

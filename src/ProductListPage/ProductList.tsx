@@ -1,36 +1,15 @@
-// ProductList.tsx
-import { useEffect, useState } from "react";
-import {
-  addCartItem,
-  deleteCartItem,
-  getCartItems,
-  type ProductType,
-  type CartItemType,
-} from "./remote";
+import { useState } from "react";
+import { type CartItemType, type ProductType } from "./remote";
 import { mockProducts } from "../mocks/products";
 
-export default function ProductList() {
+export default function ProductList({
+  cartItems,
+  handleToggleCartItem,
+}: {
+  cartItems: CartItemType[];
+  handleToggleCartItem: (productId: number) => void;
+}) {
   const [products] = useState<ProductType[]>(mockProducts);
-  const [cartItems, setCartItems] = useState<CartItemType[]>([]);
-
-  useEffect(() => {
-    getCartItems().then(setCartItems);
-  }, []);
-
-  const handleToggleCartItem = async (productId: number) => {
-    const existingCartItem = cartItems.find(
-      (item) => item.product.id === productId
-    );
-
-    if (existingCartItem) {
-      await deleteCartItem(existingCartItem.id);
-    } else {
-      await addCartItem(productId);
-    }
-
-    const updatedCartItems = await getCartItems();
-    setCartItems(updatedCartItems);
-  };
 
   return (
     <>
