@@ -41,3 +41,7 @@ export const deleteCartItem = async (cartItemId: number) => {
   mockCartItems = mockCartItems.filter((item) => item.id !== cartItemId);
   return Promise.resolve(null);
 };
+
+export const getProducts = async (): Promise<ProductType[]> => {
+  return Promise.resolve(mockProducts);
+};
