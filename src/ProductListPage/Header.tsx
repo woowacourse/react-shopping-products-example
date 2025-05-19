@@ -14,7 +14,7 @@ function CartIcon() {
 }
 
 function CartItemCount() {
-  const { cartItemCount } = useCartContext();
+  const { cartItems } = useCartContext();
 
-  return <div>{cartItemCount} items</div>;
+  return <div>{cartItems.length} items</div>;
 }

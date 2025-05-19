@@ -1,15 +1,15 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import {
-  addCartItem,
-  deleteCartItem,
-  getCartItems,
-  type CartItemType,
-} from "./remote";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { getCartItems, type CartItemType } from "./remote";
 
 type CartContextType = {
   cartItems: CartItemType[];
-  cartItemCount: number;
-  toggleCartItem: (productId: number) => Promise<void>;
+  refetchCartItems: () => Promise<void>;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -17,31 +17,20 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItemType[]>([]);
 
-  useEffect(() => {
-    getCartItems().then(setCartItems);
+  const fetchCartItems = useCallback(async () => {
+    const cartItems = await getCartItems();
+    setCartItems(cartItems);
   }, []);
 
-  const toggleCartItem = async (productId: number) => {
-    const existingCartItem = cartItems.find(
-      (item) => item.product.id === productId
-    );
-
-    if (existingCartItem) {
-      await deleteCartItem(existingCartItem.id);
-    } else {
-      await addCartItem(productId);
-    }
-
-    const updatedCartItems = await getCartItems();
-    setCartItems(updatedCartItems);
-  };
+  useEffect(() => {
+    fetchCartItems();
+  }, [fetchCartItems]);
 
   return (
     <CartContext.Provider
       value={{
         cartItems,
-        cartItemCount: cartItems.length,
-        toggleCartItem,
+        refetchCartItems: fetchCartItems,
       }}
     >
       {children}

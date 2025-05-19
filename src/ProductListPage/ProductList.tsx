@@ -1,4 +1,4 @@
-import { type ProductType } from "./remote";
+import { addCartItem, deleteCartItem, type ProductType } from "./remote";
 import { useCartContext } from "./CartContext";
 import { useProductListContext } from "./ProductListContext";
 
@@ -15,9 +15,24 @@ export default function ProductList() {
 }
 
 function ProductItem({ product }: { product: ProductType }) {
-  const { cartItems, toggleCartItem } = useCartContext();
+  const { cartItems, refetchCartItems } = useCartContext();
 
   const isInCart = cartItems.some((item) => item.product.id === product.id);
+
+  const toggleCartItem = async (productId: number) => {
+    const existingCartItem = cartItems.find(
+      (item) => item.product.id === productId
+    );
+
+    if (existingCartItem) {
+      await deleteCartItem(existingCartItem.id);
+    } else {
+      await addCartItem(productId);
+    }
+
+    await refetchCartItems();
+  };
+
   const onToggleCart = () => toggleCartItem(product.id);
 
   return (

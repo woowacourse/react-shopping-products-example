@@ -1,8 +1,15 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { getProducts, type ProductType } from "./remote";
 
 interface ProductListContextType {
   products: ProductType[];
+  refetchProducts: () => Promise<void>;
 }
 
 const ProductListContext = createContext<ProductListContextType | undefined>(
@@ -16,12 +23,19 @@ export function ProductListProvider({
 }) {
   const [products, setProducts] = useState<ProductType[]>([]);
 
-  useEffect(() => {
-    getProducts().then(setProducts);
+  const fetchProducts = useCallback(async () => {
+    const products = await getProducts();
+    setProducts(products);
   }, []);
 
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
   return (
-    <ProductListContext.Provider value={{ products }}>
+    <ProductListContext.Provider
+      value={{ products, refetchProducts: fetchProducts }}
+    >
       {children}
     </ProductListContext.Provider>
   );
