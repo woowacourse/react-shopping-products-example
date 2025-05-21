@@ -1,13 +1,21 @@
-import { addCartItem, deleteCartItem, type ProductType } from "./remote";
-import { useCartContext } from "./CartContext";
-import { useProductListContext } from "./ProductListContext";
+import {
+  addCartItem,
+  deleteCartItem,
+  getCartItems,
+  getProducts,
+  type ProductType,
+} from "./remote";
+import { useAPI } from "./APIContex";
 
 export default function ProductList() {
-  const { products } = useProductListContext();
+  const { data: products } = useAPI({
+    fetcher: getProducts,
+    name: "products",
+  });
 
   return (
     <>
-      {products.map((product) => (
+      {products?.map((product) => (
         <ProductItem key={product.id} product={product} />
       ))}
     </>
@@ -15,12 +23,15 @@ export default function ProductList() {
 }
 
 function ProductItem({ product }: { product: ProductType }) {
-  const { cartItems, refetchCartItems } = useCartContext();
+  const { data: cartItems, refetch: refetchCartItems } = useAPI({
+    fetcher: getCartItems,
+    name: "cartItems",
+  });
 
-  const isInCart = cartItems.some((item) => item.product.id === product.id);
+  const isInCart = cartItems?.some((item) => item.product.id === product.id);
 
   const toggleCartItem = async (productId: number) => {
-    const existingCartItem = cartItems.find(
+    const existingCartItem = cartItems?.find(
       (item) => item.product.id === productId
     );
 

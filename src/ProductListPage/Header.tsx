@@ -1,4 +1,5 @@
-import { useCartContext } from "./CartContext";
+import { useAPI } from "./APIContex";
+import { getCartItems } from "./remote";
 
 export default function Header() {
   return (
@@ -14,7 +15,10 @@ function CartIcon() {
 }
 
 function CartItemCount() {
-  const { cartItems } = useCartContext();
+  const cartItems = useAPI({
+    fetcher: getCartItems,
+    name: "cartItems",
+  })?.data;
 
-  return <div>{cartItems.length} items</div>;
+  return <div>{cartItems?.length} items</div>;
 }
